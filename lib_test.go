@@ -29,7 +29,6 @@ func makeBench(runner PureBenchFunction, input []byte) func(b *testing.B) {
 
 func TestAndBenchSha256(t *testing.T) {
 	for i := 0; i < 1024; i = i + 8 {
-		log.Printf("Benchmarking SHA256 on %d bytes\n", i)
 		input := make([]byte, i)
 		rand.Read(input)
 		funcToRun := vm.PrecompiledContractsIstanbul[common.BytesToAddress([]byte{0x02})].Run
@@ -37,13 +36,12 @@ func TestAndBenchSha256(t *testing.T) {
 		result := testing.Benchmark(runnable)
 		runningNs := result.NsPerOp()
 		gas := MGASPERSECOND * runningNs / 1000000000
-		t.Log("Gas = ", gas)
+		t.Logf("SHA256 on %d bytes takes %d gas\n", i, gas)
 	}
 }
 
 func TestAndBenchRipemd(t *testing.T) {
 	for i := 0; i < 1024; i = i + 8 {
-		log.Printf("Benchmarking RIPEMD160 on %d bytes\n", i)
 		input := make([]byte, i)
 		rand.Read(input)
 		funcToRun := vm.PrecompiledContractsIstanbul[common.BytesToAddress([]byte{0x03})].Run
@@ -51,14 +49,13 @@ func TestAndBenchRipemd(t *testing.T) {
 		result := testing.Benchmark(runnable)
 		runningNs := result.NsPerOp()
 		gas := MGASPERSECOND * runningNs / 1000000000
-		t.Log("Gas = ", gas)
+		t.Logf("RIPEMD on %d bytes takes %d gas\n", i, gas)
 	}
 }
 
 func TestAndBenchBlake2f(t *testing.T) {
 	lengths := []int{0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192}
 	for _, l := range lengths {
-		log.Printf("Benchmarking Blake2f on %d iterations\n", l)
 		input := make([]byte, 213)
 		rand.Read(input)
 		input[212] &= 1
@@ -73,7 +70,7 @@ func TestAndBenchBlake2f(t *testing.T) {
 		result := testing.Benchmark(runnable)
 		runningNs := result.NsPerOp()
 		gas := MGASPERSECOND * runningNs / 1000000000
-		t.Log("Gas = ", gas)
+		t.Logf("Blake2f on %d iterations takes %d gas\n", l, gas)
 	}
 	for i := 0; i < 1024; i = i + 8 {
 
@@ -82,7 +79,6 @@ func TestAndBenchBlake2f(t *testing.T) {
 
 func TestAndBenchKeccak256(t *testing.T) {
 	for i := 0; i < 1024; i = i + 8 {
-		log.Printf("Benchmarking Keccak256 on %d bytes\n", i)
 		input := make([]byte, i)
 		rand.Read(input)
 		funcToRun := runKeccak
@@ -90,7 +86,7 @@ func TestAndBenchKeccak256(t *testing.T) {
 		result := testing.Benchmark(runnable)
 		runningNs := result.NsPerOp()
 		gas := MGASPERSECOND * runningNs / 1000000000
-		t.Log("Gas = ", gas)
+		t.Logf("Keccak256 on %d bytes takes %d gas\n", i, gas)
 	}
 }
 
