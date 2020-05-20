@@ -9,6 +9,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/vm"
+	"github.com/ethereum/go-ethereum/crypto"
 )
 
 const MGASPERSECOND = 35000000
@@ -77,4 +78,24 @@ func TestAndBenchBlake2f(t *testing.T) {
 	for i := 0; i < 1024; i = i + 8 {
 
 	}
+}
+
+func TestAndBenchKeccak256(t *testing.T) {
+	for i := 0; i < 1024; i = i + 8 {
+		log.Printf("Benchmarking Keccak256 on %d bytes\n", i)
+		input := make([]byte, i)
+		rand.Read(input)
+		funcToRun := runKeccak
+		runnable := makeBench(funcToRun, input)
+		result := testing.Benchmark(runnable)
+		runningNs := result.NsPerOp()
+		gas := MGASPERSECOND * runningNs / 1000000000
+		t.Log("Gas = ", gas)
+	}
+}
+
+func runKeccak(input []byte) ([]byte, error) {
+	out := crypto.Keccak256Hash(input)
+
+	return out[:], nil
 }
